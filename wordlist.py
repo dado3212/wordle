@@ -16,14 +16,13 @@ def score_word(goal_word: str, guess_word: str) -> ScoredWord:
     return answers
 
 def matches_scored_word(word: str, scored_word: ScoredWord) -> bool:
-    for letter in scored_word:
-        if (letter[1]) == 't':
-            return True
-    return False
-
-def filter_word_list(word_list: List[str], scored_word: ScoredWord) -> List[str]:
-    # For each word, check if it matches
-    return word_list
+    for i in range(0, len(scored_word)):
+        letter = scored_word[i]
+        if letter[1] == 2 and letter[0] != word[i]:
+            return False
+        if letter[1] == 1 and letter[0] not in word:
+            return False
+    return True
 
 # This generates the potential wordlists, both for the known Wordle list, and
 # a more broader set of 5 letter words
@@ -49,6 +48,8 @@ valid_words = re.search(r'La=\[(.*?)\]', script.text)
 assert valid_words is not None
 valid_words = valid_words.group(1).split(',')
 valid_words = [x.strip('"') for x in valid_words]
+valid_words = valid_words + valid_answers
+valid_words.sort()
 
 print("Downloaded {0} answers out of {1} total valid words".format(len(valid_answers), len(valid_words)))
 
@@ -60,8 +61,15 @@ print("Downloaded {0} answers out of {1} total valid words".format(len(valid_ans
 # We assume that we don't know which are valid answers for now
 
 goal_word = random.choice(valid_answers)
-
-first_guess = random.choice(valid_words)
 print("The goal word is: '{0}'".format(goal_word))
-print("Guessing '{0}'".format(first_guess))
-print(score_word(goal_word, first_guess))
+
+guesses = 0
+possible_words = valid_words
+while (True):
+    guesses += 1
+    guess = random.choice(possible_words)
+    scored_word = score_word(goal_word, guess)
+    possible_words = [word for word in valid_words if matches_scored_word(word, scored_word)]
+    print("Guess #{0} is '{1}', reducing down to {2} still valid words.".format(guesses, guess, len(possible_words)))
+    if (guess == goal_word):
+        break
