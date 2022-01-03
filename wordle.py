@@ -23,6 +23,8 @@ def matches_scored_word(word: str, scored_word: ScoredWord) -> bool:
             return False
         if letter[1] == 1 and letter[0] not in word:
             return False
+        if letter[1] == 0 and letter[0] in word:
+            return False
     return True
 
 with open('valid_words', 'rb') as fp:
@@ -47,7 +49,9 @@ while (True):
     guesses += 1
     guess = random.choice(possible_words)
     scored_word = score_word(goal_word, guess)
-    possible_words = [word for word in valid_words if matches_scored_word(word, scored_word)]
-    print("Guess #{0} is '{1}', reducing down to {2} still valid words.".format(guesses, guess, len(possible_words)))
+    possible_words = [word for word in possible_words if matches_scored_word(word, scored_word) and word != guess]
     if (guess == goal_word):
+        print("Correctly guessed '{0}' with {1} total guesses!".format(guess, guesses))
         break
+    else:
+        print("Guess #{0} is '{1}', reducing down to {2} still valid words.".format(guesses, guess, len(possible_words)))
