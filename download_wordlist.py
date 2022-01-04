@@ -1,4 +1,5 @@
 import requests, re, pickle
+from typing import Dict
 
 # This generates the potential wordlists, both for the known Wordle list, and
 # a more broader set of 5 letter words
@@ -26,6 +27,15 @@ valid_words = valid_words.group(1).split(',')
 valid_words = [x.strip('"') for x in valid_words]
 valid_words = valid_words + valid_answers
 valid_words.sort()
+
+def breakdown(word: str) -> Dict[str, bool]:
+    a: Dict[str, bool] = {}
+    for letter in word:
+        a[letter] = True
+    return a
+
+valid_words = [(word, breakdown(word)) for word in valid_words]
+valid_answers = [(word, breakdown(word)) for word in valid_answers]
 
 with open('valid_words', 'wb') as fp:
     pickle.dump(valid_words, fp)

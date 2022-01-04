@@ -1,28 +1,33 @@
 
-from typing import List, Tuple, Callable
+from typing import List, Tuple, Callable, Dict
 
-ScoredWord = List[Tuple[str, int]]
+Word = Tuple[str, Dict[str, bool]]
+ScoredWord = Dict[int, List[Tuple[str, int]]]
 
-def score_word(goal_word: str, guess_word: str) -> ScoredWord:
-    answers: List[Tuple[str, int]] = []
-    for i in range(0, len(guess_word)):
-        guessed_letter = guess_word[i]
-        if guessed_letter == goal_word[i]:
-            answers.append((guessed_letter, 2))
-        elif guessed_letter in goal_word:
-            answers.append((guessed_letter, 1))
+def score_word(goal_word: Word, guess_word: Word) -> ScoredWord:
+    answers: Dict[int, List[Tuple[str, int]]] = {2: [], 1: [], 0: []}
+    for i in range(0, len(guess_word[0])):
+        guessed_letter = guess_word[0][i]
+        if guessed_letter == goal_word[0][i]:
+            answers[2].append((guessed_letter, i))
+        elif guessed_letter in goal_word[1]:
+            answers[1].append((guessed_letter, i))
         else:
-            answers.append((guessed_letter, 0))
+            answers[0].append((guessed_letter, i))
     return answers
 
-def matches_scored_word(word: str, scored_word: ScoredWord) -> bool:
-    for i in range(0, len(scored_word)):
-        letter = scored_word[i]
-        if letter[1] == 2 and letter[0] != word[i]:
+def matches_scored_word(word: Word, scored_word: ScoredWord) -> bool:
+    # Letter must not exist
+    for l in scored_word[0]:
+        if l[0] in word[1]:
             return False
-        if letter[1] == 1 and letter[0] not in word:
+    # Letter must exist
+    for l in scored_word[1]:
+        if l[0] not in word[1]:
             return False
-        if letter[1] == 0 and letter[0] in word:
+    # Letter must exist in position
+    for l in scored_word[2]:
+        if word[0][l[1]] != l[0]:
             return False
     return True
 
@@ -42,7 +47,7 @@ def evaluate_method(total_games_to_play: int, method: Callable[[], int]):
         ("Played {0} games in {1} seconds and found the word in an average of "+
         "{2} guesses, though the worst case took {3} guesses.").format(
             total_games_to_play,
-            round(time.time() - start, 1),
+            round(time.time() - start, 2),
             round(float(total_guesses) / total_games_to_play, 2),
             max
         )
@@ -50,7 +55,7 @@ def evaluate_method(total_games_to_play: int, method: Callable[[], int]):
 
 import pickle
 with open('valid_words', 'rb') as fp:
-    valid_words = pickle.load(fp)
+    valid_words: List[Word] = pickle.load(fp)
 
 with open('valid_answers', 'rb') as fp:
-    valid_answers = pickle.load(fp)
+    valid_answers: List[Word] = pickle.load(fp)

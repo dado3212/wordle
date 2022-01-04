@@ -5,8 +5,7 @@ import random
 # chooses the best one. From now on, each of the play iterations should just
 # be improving the scoring function for how to choose the best guess.
 #
-# Played 10000 games in 104.2 seconds and found the word in an average of 
-# 5.38 guesses, though the worst case took 15 guesses.
+# This has not completed even a single game yet due to time complexity.
 def play() -> int:
     goal_word = random.choice(valid_answers)
 

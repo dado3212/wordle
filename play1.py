@@ -7,7 +7,7 @@ import random
 # aren't valid answers, but are valid guesses b/c in later iterations there may
 # be more information from these versions.
 #
-# Played 10000 games in 104.2 seconds and found the word in an average of 
+# Played 10000 games in 61.26 seconds and found the word in an average of 
 # 5.38 guesses, though the worst case took 15 guesses.
 def play() -> int:
     goal_word = random.choice(valid_answers)

@@ -7,8 +7,8 @@ import random
 # Keep guessing until you get the word
 # We assume that we don't know which are valid answers for now
 
-# Played 10000 games in 99.4 seconds and found the word in an average of 
-# 5.8204 guesses, though the worst case took 15 guesses.
+# Played 10000 games in 53.8 seconds and found the word in an average of 
+# 5.81 guesses, though the worst case took 15 guesses.
 def play_dumb() -> int:
     goal_word = random.choice(valid_answers)
 
